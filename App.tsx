@@ -1,24 +1,35 @@
 // Dentro src/App.tsx
-import React, { useState, useEffect, useRef } from 'react'; // Aggiungi useRef e useEffect
-import { Flow } from './types';
-import Configurator from './components/Configurator';
 
-// ...Il codice di FlowCard e FlowSelectionScreen rimane invariato...
-const FlowCard: React.FC<any> = ({ icon, title, description, onClick }) => (/* ... */);
-const FlowSelectionScreen: React.FC<any> = ({ onSelectFlow }) => (/* ... */);
+// --- CODICE MIGLIORATO ---
+useEffect(() => {
+    const appElement = appRef.current;
+    if (!appElement) return;
 
+    // Funzione per inviare l'altezza
+    const sendHeight = () => {
+        const height = appElement.scrollHeight;
+        window.parent.postMessage({ type: 'resize-iframe', height: height }, '*');
+    };
 
-const App: React.FC = () => {
-  const [flow, setFlow] = useState<Flow | null>(null);
-  const appRef = useRef<HTMLDivElement>(null); // Creiamo un riferimento al div principale
+    // Invia l'altezza più volte per catturare i cambiamenti di layout
+    sendHeight(); // Immediatamente
+    const aLittleLater = setTimeout(sendHeight, 200); // Dopo un breve ritardo
+    const later = setTimeout(sendHeight, 500); // E ancora un po' dopo
 
-  const handleSelectFlow = (selectedFlow: Flow) => {
-    setFlow(selectedFlow);
-  };
+    // Aggiungiamo un "osservatore" che controlla se le dimensioni cambiano
+    const resizeObserver = new ResizeObserver(() => {
+        sendHeight();
+    });
+    resizeObserver.observe(appElement);
 
-  const handleGoBack = () => {
-    setFlow(null);
-  };
+    // Funzione di pulizia: rimuove tutto quando il componente non serve più
+    return () => {
+        clearTimeout(aLittleLater);
+        clearTimeout(later);
+        resizeObserver.disconnect();
+    };
+
+}, [flow]); // Si attiva quando cambi schermata
 
   // --- CODICE AGGIUNTO ---
   // Questo "hook" si attiva ogni volta che 'flow' cambia
