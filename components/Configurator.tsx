@@ -106,7 +106,6 @@ const Configurator: React.FC<ConfiguratorProps> = ({ flow, onBack }) => {
 
             <ModelViewerComponent modelUrl={isStradale ? STRADALE_MODEL_URL : MOTARD_MODEL_URL} config={configuration} flow={flow} />
 
-            {/* --- CODICE DELLE OPZIONI RIPRISTINATO --- */}
             <div className="options-panel p-4 md:p-10 bg-[rgba(10,10,25,0.6)] backdrop-blur-lg">
                 {configuration.type === Flow.Stradale && (
                     <div id="stradale-options">
@@ -148,7 +147,32 @@ const Configurator: React.FC<ConfiguratorProps> = ({ flow, onBack }) => {
                             <KitCheckbox kitId="kit-canale" label="Kit Canale" price={`da €${PRICES['kit-canale-meta'].toFixed(2)}`} checked={configuration.kits.canale} onChange={(e) => updateMotardConfig('kits', { ...configuration.kits, canale: e.target.checked })} />
                             {configuration.kits.canale && (
                                 <div className="pl-6 pt-4 mt-4 border-l-2 border-slate-700/50 ml-4 space-y-6">
-                                    {/* Contenuto opzioni canale... */}
+                                    {/* --- CODICE DELLE OPZIONI CANALE INSERITO QUI --- */}
+                                    <div>
+                                        <h4 className="text-md font-bold text-slate-300 mb-3">Tipo Grafica</h4>
+                                        <div className="flex flex-col gap-4">
+                                            <RadioOption name="canale-grafica-type" value={GraphicType.Meta} label="Metà Cerchio" price={`€${PRICES['kit-canale-meta'].toFixed(2)}`} checked={configuration.canaleOptions.type === GraphicType.Meta} onChange={(e) => updateMotardConfig('canaleOptions', {...configuration.canaleOptions, type: e.target.value as GraphicType})} />
+                                            <RadioOption name="canale-grafica-type" value={GraphicType.Intero} label="Intero Cerchio" price={`€${PRICES['kit-canale-intero'].toFixed(2)}`} checked={configuration.canaleOptions.type === GraphicType.Intero} onChange={(e) => updateMotardConfig('canaleOptions', {...configuration.canaleOptions, type: e.target.value as GraphicType})} />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-md font-bold text-slate-300 mb-3">Colore Principale</h4>
+                                        <ColorPalette selectedColor={configuration.canaleOptions.primaryColor} onSelectColor={(color) => updateMotardConfig('canaleOptions', {...configuration.canaleOptions, primaryColor: color})} paletteId="motard-canale-primary" />
+                                    </div>
+                                    {configuration.canaleOptions.type === GraphicType.Intero && (
+                                        <div>
+                                            <h4 className="text-md font-bold text-slate-300 mb-3">Colore Secondario</h4>
+                                            <ColorPalette selectedColor={configuration.canaleOptions.secondaryColor} onSelectColor={(color) => updateMotardConfig('canaleOptions', {...configuration.canaleOptions, secondaryColor: color})} paletteId="motard-canale-secondary" />
+                                        </div>
+                                    )}
+                                    <div>
+                                        <h4 className="text-md font-bold text-slate-300 mb-3">Finitura</h4>
+                                        <div className="flex flex-col gap-4">
+                                            {Object.values(FinishType).map(finish => (
+                                                <RadioOption key={finish} name="canale-finish" value={finish} label={finish.charAt(0).toUpperCase() + finish.slice(1)} price={`+€${(PRICES[`finitura-${finish}`] || 0).toFixed(2)}`} checked={configuration.canaleOptions.finish === finish} onChange={(e) => updateMotardConfig('canaleOptions', {...configuration.canaleOptions, finish: e.target.value as FinishType})} />
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
                             )}
                         </OptionGroup>
