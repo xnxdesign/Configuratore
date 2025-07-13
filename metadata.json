@@ -1,0 +1,5 @@
+{
+  "name": "3D Motorcycle Wheel Configurator",
+  "description": "A 3D configurator for customizing motorcycle wheels. Choose between street and motard styles, select colors, graphics, and finishes to create your unique design and see the price update in real-time.",
+  "requestFramePermissions": []
+}
